@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -15,6 +16,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import com.example.alexx.dribbleapp.R;
+import com.example.alexx.dribbleapp.view.shot_list.ShotListFragment;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,14 +37,22 @@ public class MainActivity extends AppCompatActivity {
 
         setUpDrawer();
 
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container, ShotListFragment.newInstance())
+                .commit();
 
+        List<Fragment> frag = getSupportFragmentManager().getFragments();
 
+        Log.d("xgan68", frag.size() + "");
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+
+
     }
 
     @Override
@@ -70,8 +82,17 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.isChecked()) {
+                    drawerLayout.closeDrawers();
+
+                    return true;
+                }
+
+                Fragment fragment = null;
+
                 switch (item.getItemId()) {
                     case R.id.drawer_menu_home:
+                        fragment = new ShotListFragment().newInstance();
                         Toast.makeText(MainActivity.this, "home clicked", Toast.LENGTH_LONG).show();
                         break;
                     case R.id.drawer_menu_likes:
@@ -80,6 +101,14 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_menu_buckets:
                         Toast.makeText(MainActivity.this, "buckets clicked", Toast.LENGTH_LONG).show();
                         break;
+                }
+
+                if (fragment != null) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, fragment)
+                            .commit();
+                    return true;
                 }
 
                 return true;
