@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import com.example.alexx.dribbleapp.R;
+import com.example.alexx.dribbleapp.view.bucket_list.BucketListFragment;
 import com.example.alexx.dribbleapp.view.shot_list.ShotListFragment;
 
 import java.util.List;
@@ -37,14 +38,13 @@ public class MainActivity extends AppCompatActivity {
 
         setUpDrawer();
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_container, ShotListFragment.newInstance())
-                .commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_container, ShotListFragment.newInstance())
+                    .commit();
+        }
 
-        List<Fragment> frag = getSupportFragmentManager().getFragments();
-
-        Log.d("xgan68", frag.size() + "");
     }
 
     @Override
@@ -93,15 +93,19 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.drawer_menu_home:
                         fragment = new ShotListFragment().newInstance();
-                        Toast.makeText(MainActivity.this, "home clicked", Toast.LENGTH_LONG).show();
+                        setTitle("Home");
                         break;
                     case R.id.drawer_menu_likes:
-                        Toast.makeText(MainActivity.this, "likes clicked", Toast.LENGTH_LONG).show();
+                        fragment = new ShotListFragment().newInstance();
+                        setTitle("likes");
                         break;
                     case R.id.drawer_menu_buckets:
-                        Toast.makeText(MainActivity.this, "buckets clicked", Toast.LENGTH_LONG).show();
+                        setTitle("Buckets");
+                        fragment = new BucketListFragment().newInstance();
                         break;
                 }
+
+                drawerLayout.closeDrawers();
 
                 if (fragment != null) {
                     getSupportFragmentManager()
